@@ -1,0 +1,22 @@
+extends layout
+
+block content
+    h1= title
+    p Here are your files, #{user.name}
+
+
+    if(files.length == 0)
+        p You have no files! You are not the problem!
+    else
+        ul#books
+            each file, i in files
+                li
+                    a(href="##{file.id}") #{file.name}
+
+        script.
+            var deleteAll = function () {
+                var confirmBox = confirm('Are you sure you want to delete all your files?');
+                if (confirmBox) window.location.href = '/deleteAll';
+            }
+
+        button(onclick='deleteAll()') Click
