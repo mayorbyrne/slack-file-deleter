@@ -42,32 +42,56 @@ app.get('/logout', function (req, res) {
   });
 });
 
-app.get('/deleteAll', function (req, res) {
-  console.log('deleting files', files);
-
-  let promiseChain = [];
-  files.forEach(function (file) {
-    promiseChain.push(
-      request(`https://slack.com/api/files.delete?token=${accessToken}&file=${file.id}`)
-        .then(function (res) {
-          console.log(res);
-        })
-    )
-  });
-
-  Promise.all(promiseChain)
-    .then(function () {
-      res.redirect('files');
+app.get('/delete/:fileId', function(req, res)
+{
+  request(`https://slack.com/api/files.delete?token=${accessToken}&file=${req.params.fileId}`)
+    .then(function (body) {
+      console.log(body);
+      res.redirect('/files');
     })
     .catch(function (err) {
       console.log(err);
-      res.status(500).end();
+      res.redirect('/files');
     });
+});
+
+app.get('/deleteAll/:days?', function (req, res) {
+  // console.log('deleting files', files);
+  var days = req.params.days;
+  console.log(days);
+
+  let promiseChain = [];
+  files.forEach(function (file) {
+    if (days)
+    {
+      var xDaysAgo = app.locals.moment().subtract(days, 'days');
+      var timestamp = app.locals.moment.unix(file.timestamp);
+
+      if (timestamp.isAfter(xDaysAgo) && file.timestamp.toString() != '1496930180') return;
+    }
+
+    promiseChain.push(
+        request(`https://slack.com/api/files.delete?token=${accessToken}&file=${file.id}`)
+          .then(function (res) {
+            console.log(res);
+          })
+      )
+    });
+
+    Promise.all(promiseChain)
+      .then(function () {
+        res.redirect('/files');
+      })
+      .catch(function (err) {
+        console.log(err);
+        res.status(500).end();
+      });
 });
 
 app.get('/files', function (req, res) {
   if (!accessToken || !user) {
-    res.redirect(`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}`)
+    res.redirect(`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}`);
+    return;
   }
   var options = {
     uri: `https://slack.com/api/files.list?token=${accessToken}&user=${user.id}&page=2000`,
@@ -90,7 +114,6 @@ app.get('/files', function (req, res) {
 });
 
 app.get('/redirect2', function (req, res) {
-  console.log('here now');
   if (req.query.code) {
     var options = {
       uri: `https://slack.com/api/oauth.access?client_id=${process.env.CLIENT_ID}&client_secret=${process.env.CLIENT_SECRET}&code=${req.query.code}&redirect_uri=${process.env.REDIRECT_URI}2`,
@@ -100,8 +123,8 @@ app.get('/redirect2', function (req, res) {
     request(options)
       .then(function (body) {
         if (!body.error) {
-          console.log('body:', body);
-          console.log('Your new scope is: ', body.scope);
+          // console.log('body:', body);
+          // console.log('Your new scope is: ', body.scope);
 
           res.redirect(`/files`);
         }
@@ -120,8 +143,8 @@ app.get('/redirect2', function (req, res) {
 });
 
 app.get('/redirect', function (req, res) {
-  console.log(req.query);
-  console.log(req.body);
+  // console.log(req.query);
+  // console.log(req.body);
 
   if (req.query.code) {
     var options = {
@@ -129,12 +152,12 @@ app.get('/redirect', function (req, res) {
       json: true
     };
 
-    console.log(options);
+    // console.log(options);
 
     request(options)
       .then(function (body) {
         if (!body.error) {
-          console.log('body:', body);
+          // console.log('body:', body);
           console.log('Hello, ', body.user.name);
           console.log('Your access token is: ', body.access_token);
           accessToken = body.access_token;

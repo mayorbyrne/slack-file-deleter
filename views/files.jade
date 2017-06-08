@@ -1,28 +1,40 @@
 extends layout
-
 block content
-    h1= title
-    p Hello, #{user.name}
+  h1= title
+  p Hello, #{user.name}
 
+  if(files.length == 0)
+    p You have no files! You are not the problem!
+  else
+    div
+      table
+        thead
+          tr: th Files
+            th Date Created
+        tbody
+          each file, i in files
+            tr
+              td
+                button(onclick='deleteFile("#{file.id}", "#{file.name}")') #{file.name}
+              td= moment.unix(file.created).format("MM/DD/YYYY")
+    script.
+      var deleteFile = function (id, name) {
+        var confirmBox = confirm('Are you sure you want to delete file' + name + '?');
+        var href = "/delete/" + id;
+        if (confirmBox) window.location.href = href;
+      }
+      var deleteAll = function (days) {
+        var msg = 'Are you sure you want to delete all your files' + (days ? ' older than ' + days.toString() + ' days?' : '?');
+        var confirmBox = confirm(msg);
+        var href = "/deleteAll";
+        if (days) href += '/' + days.toString();
+        if (confirmBox) window.location.href = href;
+      }
+    p
 
-    if(files.length == 0)
-        p You have no files! You are not the problem!
-    else
-        div
-            table
-                thead
-                    tr: th Files
-                        th Date Created
-                tbody
-                    each file, i in files
-                        tr
-                            td
-                                a(href="##{file.id}") #{file.name}
-                            td= moment(file.created * 1000).format("MM/DD/YYYY")
-        script.
-            var deleteAll = function () {
-                var confirmBox = confirm('Are you sure you want to delete all your files?');
-                if (confirmBox) window.location.href = '/deleteAll';
-            }
+    button(onclick='deleteAll()') Delete All
+    p
+    button(onclick='deleteAll(10)') Delete files > 10 days old
+    p
+    button(onclick='deleteAll(30)') Delete files > 30 days old
 
-        button(onclick='deleteAll()') Delete All
