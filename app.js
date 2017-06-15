@@ -6,12 +6,11 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var request = require('request-promise');
+var session = require('express-session');
 
 var app = express();
 
-var accessToken;
-var user;
-var files;
+app.use(session({ secret: 'keyboard cat', name: 'fileMgrSession', cookie: { maxAge: 60000 }}));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -34,8 +33,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/logout', function (req, res) {
-  accessToken = null;
-  user = null;
+  req.session.destroy();
   res.render('index', {
     CLIENT_ID: process.env.CLIENT_ID,
     REDIRECT_URI: process.env.REDIRECT_URI
@@ -44,7 +42,8 @@ app.get('/logout', function (req, res) {
 
 app.get('/delete/:fileId', function(req, res)
 {
-  request(`https://slack.com/api/files.delete?token=${accessToken}&file=${req.params.fileId}`)
+  console.log(req.session.accessToken);
+  request(`https://slack.com/api/files.delete?token=${req.session.accessToken}&file=${req.params.fileId}`)
     .then(function (body) {
       console.log(body);
       res.redirect('/files');
@@ -61,7 +60,7 @@ app.get('/deleteAll/:days?', function (req, res) {
   console.log(days);
 
   let promiseChain = [];
-  files.forEach(function (file) {
+  req.session.files.forEach(function (file) {
     if (days)
     {
       var xDaysAgo = app.locals.moment().subtract(days, 'days');
@@ -71,7 +70,7 @@ app.get('/deleteAll/:days?', function (req, res) {
     }
 
     promiseChain.push(
-        request(`https://slack.com/api/files.delete?token=${accessToken}&file=${file.id}`)
+        request(`https://slack.com/api/files.delete?token=${req.session.accessToken}&file=${file.id}`)
           .then(function (res) {
             console.log(res);
           })
@@ -89,22 +88,24 @@ app.get('/deleteAll/:days?', function (req, res) {
 });
 
 app.get('/files', function (req, res) {
-  if (!accessToken || !user) {
+  console.log('FILES:');
+  console.log(req.session.accessToken);
+  if (!req.session.accessToken || !req.session.user) {
     res.redirect(`https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}`);
     return;
   }
   var options = {
-    uri: `https://slack.com/api/files.list?token=${accessToken}&user=${user.id}&page=2000`,
+    uri: `https://slack.com/api/files.list?token=${req.session.accessToken}&user=${req.session.user.id}&page=2000`,
     json: true
   };
 
   request(options)
     .then(function (body) {
       if (body.error) throw new Error(body.error);
-      files = body.files;
+      req.session.files = body.files;
       res.render('files', {
-        user,
-        files
+        user: req.session.user,
+        files: req.session.files
       });
     })
     .catch(function (err) {
@@ -160,8 +161,8 @@ app.get('/redirect', function (req, res) {
           // console.log('body:', body);
           console.log('Hello, ', body.user.name);
           console.log('Your access token is: ', body.access_token);
-          accessToken = body.access_token;
-          user = body.user;
+          req.session.accessToken = body.access_token;
+          req.session.user = body.user;
 
           res.redirect(`https://slack.com/oauth/authorize?scope=files:write:user,files:read&client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI}2`);
         }

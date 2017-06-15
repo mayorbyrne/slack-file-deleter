@@ -3,6 +3,9 @@ block content
   h1= title
   p Hello, #{user.name}
 
+  p
+    button(onclick='logout()') Logout
+
   if(files.length == 0)
     p You have no files! You are not the problem!
   else
@@ -18,6 +21,10 @@ block content
                 button(onclick='deleteFile("#{file.id}", "#{file.name}")') #{file.name}
               td= moment.unix(file.created).format("MM/DD/YYYY")
     script.
+      var logout = function() {
+        var confirmBox = confirm('Are you sure you want to logout?');
+        if (confirmBox) window.location.href = '/logout';
+      }
       var deleteFile = function (id, name) {
         var confirmBox = confirm('Are you sure you want to delete file' + name + '?');
         var href = "/delete/" + id;
@@ -37,4 +44,3 @@ block content
     button(onclick='deleteAll(10)') Delete files > 10 days old
     p
     button(onclick='deleteAll(30)') Delete files > 30 days old
-
