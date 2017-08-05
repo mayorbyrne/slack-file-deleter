@@ -1,5 +1,11 @@
 extends layout
 block content
+  script.
+    var logout = function() {
+      var confirmBox = confirm('Are you sure you want to logout?');
+      if (confirmBox) window.location.href = '/logout';
+    }
+
   h1= title
   p Hello, #{user.name}
 
@@ -21,10 +27,6 @@ block content
                 button(onclick='deleteFile("#{file.id}", "#{file.name}")') #{file.name}
               td= moment.unix(file.created).format("MM/DD/YYYY")
     script.
-      var logout = function() {
-        var confirmBox = confirm('Are you sure you want to logout?');
-        if (confirmBox) window.location.href = '/logout';
-      }
       var deleteFile = function (id, name) {
         var confirmBox = confirm('Are you sure you want to delete file' + name + '?');
         var href = "/delete/" + id;
