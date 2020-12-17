@@ -13,7 +13,7 @@ var app = express();
 app.use(session({ secret: 'keyboard cat', name: 'fileMgrSession', cookie: { maxAge: 1800000 }}));
 
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 app.locals.moment = require('moment');
 
 app.use(logger('dev'));
