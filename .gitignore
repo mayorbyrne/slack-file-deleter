@@ -2,3 +2,5 @@
 .idea/
 node_modules
 bin
+*.pem
+.DS_Store
