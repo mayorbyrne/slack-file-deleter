@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
+let axios = require('axios');
 
 router.get('/', function(req, res, next) {
-  console.log(process.env);
   if (!req.session.accessToken || !req.session.user) {
     res.redirect(`https://slack.com/oauth/v2/authorize?client_id=${process.env.CLIENT_ID}&scope=files:read,files:write&user_scope=&redirect_url=${process.env.REDIRECT_URI}`);
     return;
@@ -21,20 +21,20 @@ router.get('/', function(req, res, next) {
   }
 
   var options = {
-    uri: uri,
-    json: true
+    url: uri
   };
 
-  request(options)
-    .then(function (body) {
-      if (body.error) throw new Error(body.error);
-      req.session.files = body.files;
+  axios(options)
+    .then((response) => {
+      console.log(response);
+      if (response.error) throw new Error(response.error);
+      req.session.files = response.data.files;
       res.render('files', {
         user: req.session.user,
         files: req.session.files
       });
     })
-    .catch(function (err) {
+    .catch((err) => {
       console.log(err);
       res.status(500).end();
     })

@@ -4,12 +4,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 require('dotenv').config();
-
+var session = require('express-session');
 
 var indexRouter = require('./routes/index');
 let filesRouter = require('./routes/files');
 
 var app = express();
+
+app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }}))
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
