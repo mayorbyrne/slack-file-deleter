@@ -7,7 +7,7 @@ block content
     }
 
   h1= title
-  p Hello, #{user.name}
+  p Hello, #{user.id}
 
   p
     button(onclick='logout()') Logout
@@ -24,18 +24,18 @@ block content
           each file, i in files
             tr
               td
-                button(onclick='deleteFile("#{file.id}", "#{file.name}")') #{file.name}
+                button(onclick=`deleteFile("${file.id}", "${file.name}")`) #{file.name}
               td= moment.unix(file.created).format("MM/DD/YYYY")
     script.
       var deleteFile = function (id, name) {
-        var confirmBox = confirm('Are you sure you want to delete file' + name + '?');
-        var href = "/delete/" + id;
+        var confirmBox = confirm('Are you sure you want to delete file ' + name + '?');
+        var href = "/delete/file/" + id;
         if (confirmBox) window.location.href = href;
       }
       var deleteAll = function (days) {
         var msg = 'Are you sure you want to delete all your files' + (days ? ' older than ' + days.toString() + ' days?' : '?');
         var confirmBox = confirm(msg);
-        var href = "/deleteAll";
+        var href = "/delete/all";
         if (days) href += '/' + days.toString();
         if (confirmBox) window.location.href = href;
       }

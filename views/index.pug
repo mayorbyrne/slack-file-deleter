@@ -2,11 +2,11 @@ extends layout
 
 block content
   h1= title
-  p Welcome to the Slack File Manager.
+  p Welcome to the Slack File Manager...
 
 
   a(
-    href="https://slack.com/oauth/authorize?scope=identity.basic,identity.email,identity.team,identity.avatar&client_id=#{CLIENT_ID}&redirect_uri=#{REDIRECT_URI}"
+    href=`https://slack.com/oauth/v2/authorize?client_id=${process.env.CLIENT_ID}&scope=&user_scope=files:read,files:write`
     type='checkbox'
     name='agreement'
     checked
