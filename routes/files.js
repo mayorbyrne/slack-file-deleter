@@ -4,7 +4,7 @@ let axios = require('axios');
 
 router.get('/', function(req, res, next) {
   if (!req.session.accessToken || !req.session.user) {
-    res.redirect(`https://slack.com/oauth/v2/authorize?client_id=${process.env.CLIENT_ID}&scope=files:read,files:write&user_scope=&redirect_url=${process.env.REDIRECT_URI}`);
+    res.redirect(`https://slack.com/oauth/v2/authorize?client_id=${process.env.CLIENT_ID}&scope=&user_scope=files:read,files:write`);
     return;
   }
 
@@ -26,7 +26,7 @@ router.get('/', function(req, res, next) {
 
   axios(options)
     .then((response) => {
-      console.log(response);
+      // console.log(response);
       if (response.error) throw new Error(response.error);
       req.session.files = response.data.files;
       res.render('files', {

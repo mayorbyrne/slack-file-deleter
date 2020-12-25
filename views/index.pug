@@ -6,7 +6,7 @@ block content
 
 
   a(
-    href=`https://slack.com/oauth/v2/authorize?client_id=${CLIENT_ID}&scope=files:read,files:write&user_scope=identify&redirect_url=${REDIRECT_URI}`
+    href=`https://slack.com/oauth/v2/authorize?client_id=${process.env.CLIENT_ID}&scope=&user_scope=files:read,files:write`
     type='checkbox'
     name='agreement'
     checked
