@@ -20,8 +20,6 @@ router.get('/redirect', function(req, res, next) {
       .then(function (response) {
         if (response.status === 200)
         {
-          console.log(response);
-          console.log('UserID ' + response.data.authed_user.id + ' logged in.');
           req.session.accessToken = response.data.authed_user.access_token;
           req.session.user = response.data.authed_user;
 
