@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "setup": "node ./setup.js"
   },
   "dependencies": {
     "axios": "^0.21.0",
@@ -19,6 +20,7 @@
   },
   "devDependencies": {
     "debug": "^2.6.9",
+    "inquirer": "^7.3.3",
     "pug": "^3.0.0",
     "request": "^2.81.0"
   }
