@@ -13,10 +13,10 @@ router.get('/', function(req, res, next) {
 
   var url = `https://slack.com/api/files.list?token=${req.session.accessToken}&count=1`;
 
-  // if (req.session.user.email === process.env.ADMIN_EMAIL)
-  // {
+  if (req.session.user.email === process.env.ADMIN_EMAIL)
+  {
     url += `&user=${req.session.user.id}`;
-  // }
+  }
 
   var options = {
     url
