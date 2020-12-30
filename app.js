@@ -9,6 +9,12 @@ var indexRouter = require('./routes/index');
 let filesRouter = require('./routes/files');
 let deleteRouter = require('./routes/delete');
 
+if (!require('fs').existsSync("./.env"))
+{
+  console.log("Project is missing a .env file.\nThis file is required to run the app properly.\nPlease add one or run 'node setup.js' to generate\n");
+  process.exit();
+}
+
 var app = express();
 
 app.locals.moment = require('moment');
