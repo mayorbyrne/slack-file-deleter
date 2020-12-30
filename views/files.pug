@@ -12,6 +12,8 @@ block content
   p
     button(onclick='logout()') Logout
 
+    button(onclick='refresh()') Refresh File List
+
   if(files.length == 0)
     p You have no files! You are not the problem!
   else
@@ -38,6 +40,9 @@ block content
         var href = "/delete/all";
         if (days) href += '/' + days.toString();
         if (confirmBox) window.location.href = href;
+      }
+      var refresh = function() {
+        window.location.href = '/files/refresh';
       }
     p
 
