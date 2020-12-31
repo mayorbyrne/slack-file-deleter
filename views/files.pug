@@ -6,11 +6,17 @@ block content
       if (confirmBox) window.location.href = '/logout';
     }
 
+    var refresh = function () {
+      window.location.href = '/files/refresh';
+    }
+
   h1= title
   p Hello, #{user.id}
 
   p
     button(onclick='logout()') Logout
+
+    button(onclick='refresh()') Refresh File List
 
   if(files.length == 0)
     p You have no files! You are not the problem!

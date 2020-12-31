@@ -1,16 +1,26 @@
 var express = require('express');
 var router = express.Router();
 let axios = require('axios');
+var debug = require('debug')('slackfilemgr:delete');
+debug.enabled = true;
 
 router.get("/file/:id", (req, res) => 
 {
   axios.get(`https://slack.com/api/files.delete?token=${req.session.accessToken}&file=${req.params.id}`)
   .then((response) => {
-    console.log(response.data);
+    if (response.data.ok)
+    {
+      debug(`file was deleted: ${req.params.id}`);
+      req.session.files = req.session.files.filter((file) => file.id !== req.params.id);
+    }
+    else
+    {
+      debug(`file was not deleted: ${req.params.id}`, response.data);
+    }
     res.redirect('/files');
   })
   .catch((err) => {
-    console.log(err);
+    debug('delete route ran into error', err);
     res.redirect('/files');
   });
 });
@@ -31,6 +41,17 @@ router.get("/all/:days?", (req, res) =>
 
     promiseChain.push(
       axios.get(`https://slack.com/api/files.delete?token=${req.session.accessToken}&file=${file.id}`)
+        .then((response) => {
+          if (response.data.ok)
+          {
+            debug(`file was deleted: ${file.name}`);
+            req.session.files = req.session.files.filter((file) => file.id !== req.params.id);
+          }
+          else
+          {
+            debug(`file was not deleted: ${file.name}`, response.data);
+          }
+        })
     )
   });
 
@@ -39,7 +60,7 @@ router.get("/all/:days?", (req, res) =>
       res.redirect('/files');
     })
     .catch((err) => {
-      console.log(err);
+      debug('delete route ran into error', err);
       res.status(500).end();
     });
 });

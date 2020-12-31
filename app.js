@@ -41,6 +41,14 @@ app.use('/', indexRouter);
 app.use('/files', filesRouter);
 app.use('/delete', deleteRouter);
 
+app.get('/logout', function (req, res) {
+  req.session.destroy();
+  res.render('index', {
+    CLIENT_ID: process.env.CLIENT_ID,
+    REDIRECT_URI: process.env.REDIRECT_URI
+  });
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
