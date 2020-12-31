@@ -6,6 +6,10 @@ block content
       if (confirmBox) window.location.href = '/logout';
     }
 
+    var refresh = function () {
+      window.location.href = '/files/refresh';
+    }
+
   h1= title
   p Hello, #{user.id}
 
@@ -40,9 +44,6 @@ block content
         var href = "/delete/all";
         if (days) href += '/' + days.toString();
         if (confirmBox) window.location.href = href;
-      }
-      var refresh = function() {
-        window.location.href = '/files/refresh';
       }
     p
 

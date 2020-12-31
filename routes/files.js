@@ -4,7 +4,6 @@ let axios = require('axios');
 
 router.get('/:refresh?', function(req, res, next) {
   let callService = !req.session.files;
-  //TODO: figure this out
 
   if (req.params.refresh)
   {
@@ -36,8 +35,6 @@ router.get('/:refresh?', function(req, res, next) {
 
 
 function getFiles(req, res, next) {
-  console.log('get files');
-
   let promiseChain = [];
 
   var url = `https://slack.com/api/files.list?token=${req.session.accessToken}&count=1`;
@@ -60,8 +57,8 @@ function getFiles(req, res, next) {
     if (response.data.files.length > 0 && response.data.paging && response.data.paging.pages > 1) {
       // TODO: handle if pages is astronomical
 
-      // we've already got the first page of results, start at index 1
-      for (let i = 1; i < response.data.paging.pages; i++) {
+      // we've already got the first page of results, start at the second page
+      for (let i = 2; i <= response.data.paging.pages; i++) {
         let pageUrl = url + `&page=${i}`;
         promiseChain.push(axios({
           url: pageUrl
