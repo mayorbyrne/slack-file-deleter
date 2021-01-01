@@ -1,5 +1,8 @@
 extends layout
 block content
+  style.
+    .refresh { margin-left: 20px; }
+
   script.
     var logout = function() {
       var confirmBox = confirm('Are you sure you want to logout?');
@@ -11,12 +14,14 @@ block content
     }
 
   h1= title
-  p Hello, #{user.id}
+  p Hello, #{user.name} (#{user.email})
 
-  p
+  img(src=user.image_48)
+
+  div
+    |<br/>
     button(onclick='logout()') Logout
-
-    button(onclick='refresh()') Refresh File List
+    button.refresh(onclick='refresh()') Refresh File List
 
   if(files.length == 0)
     p You have no files! You are not the problem!

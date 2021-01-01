@@ -16,7 +16,7 @@ router.get('/:refresh?', function(req, res, next) {
   }
 
   if (!req.session.accessToken || !req.session.user) {
-    res.redirect(`https://slack.com/oauth/v2/authorize?client_id=${process.env.CLIENT_ID}&scope=&user_scope=files:read,files:write`);
+    res.redirect(`https://slack.com/oauth/v2/authorize?client_id=${process.env.CLIENT_ID}&scope=&user_scope=files:read,files:write,identify`);
     return;
   }
 

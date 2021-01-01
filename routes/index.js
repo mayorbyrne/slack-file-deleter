@@ -23,11 +23,26 @@ router.get('/redirect', function(req, res, next) {
           req.session.accessToken = response.data.authed_user.access_token;
           req.session.user = response.data.authed_user;
 
-          res.redirect('/files');
+          return axios({
+            url: `https://slack.com/api/users.identity?token=${req.session.accessToken}`
+          });
+
         }
         else {
           throw new Error(body.error);
         }
+      })
+      .then(function(response)
+      {
+        // append the user.identity fields to the req.session.user object
+        let keys = Object.keys(response.data.user);
+        for (let i = 0; i < keys.length; i++)
+        {
+          let key = keys[i];
+          req.session.user[key] = response.data.user[key];
+        }
+        
+        res.redirect('/files');
       })
       .catch(function (err) {
         console.log(err);
