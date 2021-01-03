@@ -4,10 +4,43 @@ let axios = require('axios');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+  req.session.user = {
+    "name": "Kevin Moritz",
+    "email": "tuber@gmail.com"
+  };
+
+  req.session.files = [{
+    "name": "Test",
+    "created": new Date().getTime(),
+    "id": 1
+  },{
+    "name": "Test 2",
+    "created": new Date().getTime(),
+    "id": 2
+  },{
+    "name": "Test 3",
+    "created": new Date().getTime(),
+    "id": 3
+  },{
+    "name": "Test 4",
+    "created": new Date().getTime(),
+    "id": 4
+  },{
+    "name": "Test 5",
+    "created": new Date().getTime(),
+    "id": 5
+  }];
+
+  res.render('files', {
+    user: req.session.user,
+    files: req.session.files
+  });
+  /*
   res.render('index', { 
     REDIRECT_URI: process.env.REDIRECT_URI,
     CLIENT_ID: process.env.CLIENT_ID
   });
+  */
 });
 
 router.get('/redirect', function(req, res, next) {
