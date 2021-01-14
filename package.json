@@ -7,7 +7,7 @@
     "setup": "node ./setup.js"
   },
   "dependencies": {
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "cookie-parser": "~1.4.3",
     "dotenv": "^4.0.0",
